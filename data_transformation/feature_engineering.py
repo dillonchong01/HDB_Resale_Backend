@@ -140,12 +140,12 @@ if __name__ == "__main__":
         exit(1)
 
     # Read CSVs
-    df = pd.read_csv("backend/datasets/Cleaned_Resale_Data.csv")
-    mrts = pd.read_csv("backend/datasets/coordinates/MRT_LatLong.csv")
-    malls = pd.read_csv("backend/datasets/coordinates/Mall_LatLong.csv")
-    schools = pd.read_csv("backend/datasets/coordinates/School_LatLong.csv")
-    hdbs = pd.read_csv("backend/datasets/HDB_Features.csv")
-    rpi = pd.read_csv("backend/datasets/RPI.csv")
+    df = pd.read_csv("datasets/Cleaned_Resale_Data.csv")
+    mrts = pd.read_csv("datasets/coordinates/MRT_LatLong.csv")
+    malls = pd.read_csv("datasets/coordinates/Mall_LatLong.csv")
+    schools = pd.read_csv("datasets/coordinates/School_LatLong.csv")
+    hdbs = pd.read_csv("datasets/HDB_Features.csv")
+    rpi = pd.read_csv("datasets/RPI.csv")
 
 
     # # Get HDB Distance Features
@@ -159,7 +159,7 @@ if __name__ == "__main__":
     #     lambda x: {ft: round(area) for ft, area in zip(x['Flat_Type'], x['Floor_Area'])}
     # ).reset_index(name='Flat_Type_Area_Map')
     # features_df = pd.merge(hdbs, grouped, on='Address', how='left')
-    # features_df.to_csv("backend/datasets/Test_Data.csv", index=False)
+    # features_df.to_csv("datasets/Test_Data.csv", index=False)
 
     # Join Engineered Features with Main Dataframe
     final_df = pd.merge(df, hdbs[["Address", "Distance_MRT", "Distance_Mall", "Within_1km_of_Pri"]], on='Address', how='left')
@@ -170,4 +170,4 @@ if __name__ == "__main__":
     
     final_df.drop(columns=['Quarter', 'Town', 'Address'], inplace=True)
 
-    final_df.to_csv("backend/datasets/Final_Resale_Data.csv", index=False)
+    final_df.to_csv("datasets/Final_Resale_Data.csv", index=False)
