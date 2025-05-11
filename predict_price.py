@@ -9,11 +9,11 @@ from data_transformation.coordinate_api_caller import get_lat_long
 
 
 # Config
-MODEL_PATH = Path(os.getenv("MODEL_PATH", "backend/models/lgbm_model.pkl"))
-HDB_FEATURE_PATH = Path(os.getenv("HDB_FEATURE_PATH", "backend/datasets/HDB_Features.csv"))
-MRT_COORD_PATH = Path(os.getenv("MRT_COORD_PATH", "backend/datasets/coordinates/MRT_LatLong.csv"))
-MALL_COORD_PATH = Path(os.getenv("MALL_COORD_PATH", "backend/datasets/coordinates/Mall_LatLong.csv"))
-SCHOOL_COORD_PATH = Path(os.getenv("SCHOOL_COORD_PATH", "backend/datasets/coordinates/School_LatLong.csv"))
+MODEL_PATH = Path(os.getenv("MODEL_PATH", "models/lgbm_model.pkl"))
+HDB_FEATURE_PATH = Path(os.getenv("HDB_FEATURE_PATH", "datasets/HDB_Features.csv"))
+MRT_COORD_PATH = Path(os.getenv("MRT_COORD_PATH", "datasets/coordinates/MRT_LatLong.csv"))
+MALL_COORD_PATH = Path(os.getenv("MALL_COORD_PATH", "datasets/coordinates/Mall_LatLong.csv"))
+SCHOOL_COORD_PATH = Path(os.getenv("SCHOOL_COORD_PATH", "datasets/coordinates/School_LatLong.csv"))
 MATURE_ESTATES = set([
     "ANG MO KIO", "BEDOK", "BISHAN", "BUKIT MERAH", "BUKIT TIMAH",
     "CENTRAL", "CLEMENTI", "GEYLANG", "KALLANG/WHAMPOA",
