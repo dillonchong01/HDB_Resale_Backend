@@ -69,21 +69,21 @@ if __name__ == "__main__":
         print("Authentication failed. Exiting...")
         exit(1)
 
-    df = pd.read_csv("backend/datasets/Cleaned_Resale_Data.csv")
+    df = pd.read_csv("datasets/Cleaned_Resale_Data.csv")
 
     # Get Lat/Long of Resale HDB
     hdb_locations = df["Address"].unique()
     hdb_lat_long_df = get_lat_long(hdb_locations, api_token)
-    hdb_lat_long_df.to_csv("backend/datasets/coordinates/HDB_LatLong.csv", index=False)
+    hdb_lat_long_df.to_csv("datasets/coordinates/HDB_LatLong.csv", index=False)
 
     # Get Lat/Long of MRTs
     mrt_lat_long_df = get_lat_long(STATIONS, api_token)
-    mrt_lat_long_df.to_csv("backend/datasets/coordinates/MRT_LatLong.csv", index=False)
+    mrt_lat_long_df.to_csv("datasets/coordinates/MRT_LatLong.csv", index=False)
 
     # Get Lat/Long of Malls
     mall_lat_long_df = get_lat_long(MALLS, api_token)
-    mall_lat_long_df.to_csv("backend/datasets/coordinates/Mall_LatLong.csv", index=False)
+    mall_lat_long_df.to_csv("datasets/coordinates/Mall_LatLong.csv", index=False)
 
     # Get Lat/Long of Primary Schools (that are oversubscribed)
     school_lat_long_df = get_lat_long(SCHOOLS, api_token)
-    school_lat_long_df.to_csv("backend/datasets/coordinates/School_LatLong.csv", index=False)
+    school_lat_long_df.to_csv("datasets/coordinates/School_LatLong.csv", index=False)
