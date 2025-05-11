@@ -1,0 +1,29 @@
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/hdb-price-api:latest', './backend']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/hdb-price-api:latest']
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'hdb-price-service'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/hdb-price-api:latest'
+      - '--region'
+      - 'asia-southeast1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--memory'
+      - '1Gi'
+      - '--port'
+      - '8000'
+      - '--set-env-vars'
+      - 'MODEL_PATH=models/lgbm_model.pkl,HDB_FEATURE_PATH=datasets/HDB_Features.csv,MRT_COORD_PATH=datasets/coordinates/MRT_LatLong.csv,MALL_COORD_PATH=datasets/coordinates/Mall_LatLong.csv,SCHOOL_COORD_PATH=datasets/coordinates/School_LatLong.csv'
