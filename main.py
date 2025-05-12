@@ -16,7 +16,7 @@ app = FastAPI(
 
 # Define Request Schema using Pydantic BaseModel
 class PredictRequest(BaseModel):
-    Flat_Type: str = Field(..., description="Type of Flat (E.g. 3 Room, Executive, Multi-Gen")
+    Flat_Type: str = Field(..., description="Type of Flat (E.g. 3 Room, Executive, Multi-Gen)")
     Storey: int = Field(..., ge=0, description="Storey Number (0+)")
     Floor_Area: float = Field(..., gt=0, description="Floor Area in sqm (>0)")
     Remaining_Lease: float = Field(..., ge=0, description="Remaining Lease in Years (>=0)")

@@ -7,8 +7,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import root_mean_squared_error
 
 # Configs
-DATA_PATH = Path("backend/datasets/Final_Resale_Data.csv")
-MODEL_PATH = Path("backend/models/test_lgbm_model")
+DATA_PATH = Path("datasets/Final_Resale_Data.csv")
+MODEL_PATH = Path("models/test_lgbm_model")
 CATEGORICAL_COLS = ["Flat_Type", "Within_1km_of_Pri", "Mature"]
 
 # Main Function
@@ -17,12 +17,16 @@ def main():
         raise FileNotFoundError(f"Dataset not found: {DATA_PATH}")
     
     # Load Dataset
-    df = pd.read_csv("backend/datasets/Final_Resale_Data.csv")
+    df = pd.read_csv(DATA_PATH)
     df = df.dropna()
 
+    # Convert to Categorical Column
+    for col in CATEGORICAL_COLS:
+        df[col] = df[col].astype("category")
+
     # Create Train and Test Set (with Log Transformation of Price Label)
-    X = df.drop("Adjusted Price", axis=1)
-    y = np.log1p(df["Adjusted Price"])
+    X = df.drop("Price", axis=1)
+    y = np.log1p(df["Price"])
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     # Create Dataset for Light GBM Model Fitting
@@ -42,13 +46,14 @@ def main():
         "bagging_fraction": 0.7,
         "verbose": -1,
         "random_state": 42,
+        "monotone_constraints": [0, 0, 0, 1, 0, 0, 0, 0, 0]
     }
 
     # Train Model
     bst = lgb.train(
         params,
         train_data,
-        num_boost_round=10000,
+        num_boost_round=30000,
         valid_sets=[train_data, test_data],
         valid_names=["train", "test"],
         callbacks=[lgb.early_stopping(stopping_rounds=10)]

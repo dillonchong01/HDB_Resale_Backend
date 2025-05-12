@@ -9,7 +9,7 @@ from data_transformation.coordinate_api_caller import get_lat_long
 
 
 # Config
-MODEL_PATH = Path(os.getenv("MODEL_PATH", "models/lgbm_model.pkl"))
+MODEL_PATH = Path(os.getenv("MODEL_PATH", "models/test_lgbm_model.pkl"))
 HDB_FEATURE_PATH = Path(os.getenv("HDB_FEATURE_PATH", "datasets/HDB_Features.csv"))
 MRT_COORD_PATH = Path(os.getenv("MRT_COORD_PATH", "datasets/coordinates/MRT_LatLong.csv"))
 MALL_COORD_PATH = Path(os.getenv("MALL_COORD_PATH", "datasets/coordinates/Mall_LatLong.csv"))
@@ -119,6 +119,9 @@ def predict_price(input_features: Dict[str, Any]) -> float:
 
     # Prepare Input and Predict Price
     input_df = pd.DataFrame([features])
+    categorical_features = ["Flat_Type", "Within_1km_of_Pri", "Mature"]
+    for col in categorical_features:
+        input_df[col] = input_df[col].astype("category")
     pred_log = model.predict(input_df, num_iteration=model.best_iteration)
     pred_price = np.expm1(pred_log[0])
 

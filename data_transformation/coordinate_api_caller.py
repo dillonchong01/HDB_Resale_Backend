@@ -62,6 +62,7 @@ def get_lat_long(locations: List[str], api_token: str) -> pd.DataFrame:
 
     return pd.DataFrame(lat_long_data, columns=["Address", "Lat", "Long"])
 
+# THIS CODE IS USED TO GET LAT LONG OF HDBS, MRTS, MALLS AND SCHOOLS
 if __name__ == "__main__":
     # Authenticate and get API Token
     api_token = authenticate()

@@ -11,12 +11,6 @@ PASSWORD = "T0126546BClash"
 TOKEN_URL = "https://www.onemap.gov.sg/api/auth/post/getToken"
 ROUTE_URL = "https://www.onemap.gov.sg/api/public/routingsvc/route"
 
-MATURE_ESTATES = [
-    "ANG MO KIO", "BEDOK", "BISHAN", "BUKIT MERAH", "BUKIT TIMAH", "CENTRAL", "CLEMENTI",
-    "GEYLANG", "KALLANG/WHAMPOA", "MARINE PARADE", "PASIR RIS", "QUEENSTOWN", "SERANGOON",
-    "TAMPINES", "TOA PAYOH"
-]
-
 # Authenticate OneMap API
 def authenticate() -> str:
     """
@@ -140,34 +134,33 @@ if __name__ == "__main__":
         exit(1)
 
     # Read CSVs
-    df = pd.read_csv("datasets/Cleaned_Resale_Data.csv")
     mrts = pd.read_csv("datasets/coordinates/MRT_LatLong.csv")
     malls = pd.read_csv("datasets/coordinates/Mall_LatLong.csv")
     schools = pd.read_csv("datasets/coordinates/School_LatLong.csv")
-    hdbs = pd.read_csv("datasets/HDB_Features.csv")
-    rpi = pd.read_csv("datasets/RPI.csv")
+    hdbs = pd.read_csv("datasets/coordinates/HDB_LatLong.csv")
+    df = pd.read_csv("datasets/Cleaned_Resale_Data.csv")
 
+    # # Get HDB Distance Features in Batches of 200
+    # import time
+    # BATCH_SIZE = 100
+    # BATCHES = (len(hdbs) + BATCH_SIZE - 1) // BATCH_SIZE
+    # for i in range(BATCHES):
+    #     start = i * BATCH_SIZE
+    #     end = min(start + BATCH_SIZE, len(hdbs))
+    #     batch = hdbs.iloc[start:end].copy()
+    #     batch_engineered_features = engineer_distance_features(batch, mrts, malls, schools)
+    #     batch_engineered_features.to_csv("datasets/HDB_Distance_Features.csv",
+    #                                      index=False, mode='a', header=False)
+    #     time.sleep(30)
 
-    # # Get HDB Distance Features
-    # hdbs = engineer_distance_features(hdbs, mrts, malls, schools)
-    # hdbs.to_csv("datasets/HDB_Features.csv", index=False, mode='a', header=False)
-
-    # # Get Average SQM and Town of each Address
-    # grouped = df.groupby(['Address', 'Flat_Type', 'Town'])['Floor_Area'].mean().reset_index()
-    # print(grouped.head())
-    # grouped = grouped.groupby(['Address', 'Town']).apply(
-    #     lambda x: {ft: round(area) for ft, area in zip(x['Flat_Type'], x['Floor_Area'])}
-    # ).reset_index(name='Flat_Type_Area_Map')
-    # features_df = pd.merge(hdbs, grouped, on='Address', how='left')
-    # features_df.to_csv("datasets/Test_Data.csv", index=False)
-
-    # Join Engineered Features with Main Dataframe
-    final_df = pd.merge(df, hdbs[["Address", "Distance_MRT", "Distance_Mall", "Within_1km_of_Pri"]], on='Address', how='left')
-    final_df = pd.merge(final_df, rpi, on='Quarter', how='left')
-
-    # Classify Towns into Mature/Non-Mature Estate
-    final_df["Mature"] = final_df["Town"].isin(MATURE_ESTATES)
-    
-    final_df.drop(columns=['Quarter', 'Town', 'Address'], inplace=True)
-
-    final_df.to_csv("datasets/Final_Resale_Data.csv", index=False)
+    # Get Average SQM and Town of each Address
+    grouped = df.groupby(['Address', 'Flat_Type', 'Town'])['Floor_Area'].mean().reset_index()
+    grouped = grouped.groupby(['Address', 'Town']).apply(
+        lambda x: {ft: round(area) for ft, area in zip(x['Flat_Type'], x['Floor_Area'])}
+    ).reset_index(name='Flat_Type_Area_Map')
+    features_df = pd.merge(hdbs['Address'], grouped, on='Address', how='left')
+    # Merge with Distance Features
+    distance_features_df = pd.read_csv("datasets/HDB_Distance_Features.csv")
+    final_df = pd.merge(distance_features_df[["Address", "Distance_MRT", "Distance_Mall", "Within_1km_of_Pri"]],
+                        features_df, on="Address", how="left")
+    final_df.to_csv("datasets/HDB_Features.csv", index=False)

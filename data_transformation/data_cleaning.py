@@ -1,12 +1,6 @@
-from pathlib import Path
-from typing import Any, Dict
-
 import pandas as pd
 from pandas import DataFrame
-
-# Default File Paths
-INPUT_CSV = Path("backend/datasets/Resale.csv")
-OUTPUT_CSV = Path("backend/datasets/Cleaned_Resale_Data.csv")
+from typing import Any, Dict
 
 # Flat Type Mapping
 FLAT_TYPE_MAP: Dict[str, int] = {
@@ -20,7 +14,6 @@ FLAT_TYPE_MAP: Dict[str, int] = {
 }
 
 # Clean Data
-
 def clean_data(df: DataFrame) -> DataFrame:
     """
     Transforms raw HDB Resale DataFrame into cleaned format.
@@ -79,16 +72,3 @@ def clean_data(df: DataFrame) -> DataFrame:
     })
 
     return df_clean
-
-def main() -> None:
-    """
-    Read raw data, clean, and save.
-    """
-    if not INPUT_CSV.exists():
-        raise FileNotFoundError(f"Input file not found: {INPUT_CSV}")
-    df_raw = pd.read_csv(INPUT_CSV)
-    df_clean = clean_data(df_raw)
-    df_clean.to_csv(OUTPUT_CSV, index=False)
-
-if __name__ == "__main__":
-    main()
